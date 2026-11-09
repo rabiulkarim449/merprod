@@ -13,7 +13,7 @@
 
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
-            <h4 class="mb-0">T&amp;A (Time And Action)</h4>
+            <h4 class="mb-0">T&amp;A (Time & Action)</h4>
             @can('msfl_tna.add')
                 <a href="{{ route('msfl.tna.create') }}" class="btn btn-sm ui-act ui-act-create" title="New T&amp;A"><i class="fa-solid fa-plus"></i> New T&amp;A</a>
             @endcan
