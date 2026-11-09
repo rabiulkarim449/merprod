@@ -1,18 +1,18 @@
 {
     "name": "mestiaque/merchandising-sfl",
-    "description": "Merchandising module (Master Data, Dev, Order + BOM, Sample Stages) for Laravel (Suhana Fashions Limited) by M. Estiaque Ahmed Khan",
+    "description": "Merchandising module (Master Data, Dev, Order + BOM, Sample Stages) for Laravel (Suhana Fashions Limited) by Natore-IT",
     "type": "library",
     "keywords": [
         "Laravel",
         "MerchandisingSfl",
         "Merchandising",
-        "Estiaque"
+        "Natore-IT"
     ],
     "authors": [
         {
-            "name": "M. Estiaque Ahmed Khan",
-            "email": "mrm.khan.1298@gmail.com",
-            "homepage": "https://mestiaque.com"
+            "name": "Natore-IT",
+            "email": "info@natoreit.com",
+            "homepage": "https://natoreit.com"
         }
     ],
     "require": {
