@@ -29,7 +29,7 @@ class Style extends Model
     protected $table = 'msfl_styles';
 
     protected $fillable = [
-        'style_no', 'name', 'buyer_id', 'inquiry_id', 'season_id', 'merchandiser_id', 'product_type_id', 'color_id', 'wash_type_id',
+        'style_no', 'name', 'hs_code', 'buyer_id', 'inquiry_id', 'season_id', 'merchandiser_id', 'product_type_id', 'color_id', 'wash_type_id',
         'smv', 'target_cm', 'confirm_cm', 'fabric_sourced_by', 'fabric_description', 'description',
         'tech_pack_file', 'artwork_file', 'size_chart_file', 'development_status', 'is_active', 'created_by',
     ];

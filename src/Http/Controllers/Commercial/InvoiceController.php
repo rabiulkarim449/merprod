@@ -53,17 +53,22 @@ class InvoiceController extends Controller
         $this->authorize('msfl_com_invoice.add');
         $lc = ExportLc::query()->where('status', 'active')->find($request->integer('export_lc_id'));
 
-        return view('merchandising-sfl::admin.commercial.invoices.create', $this->formData(new Invoice(['invoice_date' => now(), 'port_of_loading' => 'Chattogram, Bangladesh']), $lc));
+        $invoice = new Invoice([
+            'invoice_date' => now(), 'port_of_loading' => 'Chattogram, Bangladesh', 'country_of_origin' => 'Bangladesh',
+            'exchange_rate' => $lc?->currency?->exchange_rate,
+        ]);
+
+        return view('merchandising-sfl::admin.commercial.invoices.create', $this->formData($invoice, $lc));
     }
 
     public function store(InvoiceRequest $request, DocumentNumberService $numbers): RedirectResponse
     {
         $lc = ExportLc::findOrFail($request->export_lc_id);
         $invoice = DB::transaction(function () use ($request, $numbers, $lc) {
-            $invoice = Invoice::create(Arr::except($request->validated(), ['cartons']) + [
+            $invoice = Invoice::create(Arr::except($request->validated(), ['cartons', 'line_remarks']) + [
                 'invoice_no' => $numbers->daily('com_invoice', Invoice::class, 'invoice_no', $request->validated('invoice_date')), 'buyer_id' => $lc->buyer_id, 'created_by' => auth()->id(),
             ]);
-            $this->saveCartons($invoice, $request->validated('cartons'));
+            $this->saveCartons($invoice, $request->validated('cartons'), $request->validated('line_remarks') ?? []);
 
             return $invoice;
         });
@@ -103,8 +108,8 @@ class InvoiceController extends Controller
     {
         $lc = ExportLc::findOrFail($request->export_lc_id);
         DB::transaction(function () use ($request, $invoice, $lc) {
-            $invoice->update(Arr::except($request->validated(), ['cartons']) + ['buyer_id' => $lc->buyer_id]);
-            $this->saveCartons($invoice, $request->validated('cartons'));
+            $invoice->update(Arr::except($request->validated(), ['cartons', 'line_remarks']) + ['buyer_id' => $lc->buyer_id]);
+            $this->saveCartons($invoice, $request->validated('cartons'), $request->validated('line_remarks') ?? []);
         });
 
         return redirect()->route('msfl.commercial.invoices.show', $invoice)->with('success', 'Commercial invoice updated.' . $this->overLimit($lc));
@@ -120,9 +125,9 @@ class InvoiceController extends Controller
 
     /**
      * Carton packing list → the invoice: carton rows with their size pcs, one invoice line per PO
-     * (qty = Σ pcs × cartons, cartons = Σ cartons, price = PO FOB), and the weights / CBM totals.
+     * (qty = Σ pcs × cartons, cartons = Σ cartons, price = PO FOB, remark entered per PO), and the weights / CBM totals.
      */
-    private function saveCartons(Invoice $invoice, array $rows): void
+    private function saveCartons(Invoice $invoice, array $rows, array $remarks = []): void
     {
         $invoice->cartons()->delete();
         $invoice->lines()->delete();
@@ -144,7 +149,7 @@ class InvoiceController extends Controller
 
         $prices = \ME\MerchandisingSfl\Models\OrderPo::whereIn('id', array_keys($perPo))->pluck('unit_price', 'id');
         foreach ($perPo as $poId => $p) {
-            $invoice->lines()->create(['order_po_id' => $poId, 'qty' => $p['qty'], 'cartons' => $p['cartons'], 'unit_price' => $prices[$poId] ?? 0]);
+            $invoice->lines()->create(['order_po_id' => $poId, 'qty' => $p['qty'], 'cartons' => $p['cartons'], 'unit_price' => $prices[$poId] ?? 0, 'remarks' => $remarks[$poId] ?? null]);
         }
         $invoice->forceFill(['net_weight' => $net ?: null, 'gross_weight' => $gross ?: null, 'cbm' => $cbm ?: null]);
         $invoice->refreshTotals();
@@ -192,6 +197,7 @@ class InvoiceController extends Controller
             'avail' => $avail,
             'sizes' => $sizes,
             'cartonRows' => $rows ?: [[]],
+            'lineRemarks' => old('line_remarks', $invoice->exists ? $invoice->lines()->pluck('remarks', 'order_po_id')->all() : []),
             'shipModes' => Lookups::shipModes(),
         ];
     }

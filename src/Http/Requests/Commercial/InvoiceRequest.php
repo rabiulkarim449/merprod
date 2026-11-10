@@ -34,7 +34,9 @@ class InvoiceRequest extends FormRequest
                 $rows[] = $row;
             }
         }
-        $this->merge(['cartons' => $rows]);
+        // Empty money fields = 0, so the totals never break.
+        $this->merge(['cartons' => $rows] + collect(['discount', 'freight_other', 'advance_received'])
+            ->mapWithKeys(fn ($f) => [$f => filled($this->input($f)) ? $this->input($f) : 0])->all());
     }
 
     public function rules(): array
@@ -55,6 +57,18 @@ class InvoiceRequest extends FormRequest
             'port_of_discharge' => ['nullable', 'string', 'max:100'],
             'final_destination' => ['nullable', 'string', 'max:100'],
             'remarks' => ['nullable', 'string', 'max:5000'],
+            // Sales invoice print: consignee (empty = buyer), origin, shipment date, rate, charges, declaration.
+            'consignee_name' => ['nullable', 'string', 'max:255'],
+            'consignee_address' => ['nullable', 'string', 'max:2000'],
+            'country_of_origin' => ['nullable', 'string', 'max:100'],
+            'shipment_date' => ['nullable', 'date'],
+            'exchange_rate' => ['nullable', 'numeric', 'gt:0'],
+            'discount' => ['nullable', 'numeric', 'min:0'],
+            'freight_other' => ['nullable', 'numeric', 'min:0'],
+            'advance_received' => ['nullable', 'numeric', 'min:0'],
+            'special_declaration' => ['nullable', 'string', 'max:5000'],
+            'line_remarks' => ['nullable', 'array'],
+            'line_remarks.*' => ['nullable', 'string', 'max:255'],
             'cartons' => ['required', 'array', 'min:1'],
             'cartons.*.order_po_id' => ['required', 'integer'],
             'cartons.*.carton_from' => ['required', 'integer', 'min:1'],

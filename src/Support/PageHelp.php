@@ -454,6 +454,31 @@ class PageHelp
                 'before' => 'T&A Plan ও আগের সব ধাপ',
                 'after' => 'Buyer-কে পাঠানো',
             ],
+            'tna-calendar' => [
+                'title' => 'T&A Calendar (Time & Action)',
+                'what' => 'সব চলমান T&A-র প্রতিটা milestone এক row-এ: plan, actual, revised তারিখ, status আর কত দিন দেরি। উপরে মোট milestone, completed, at risk আর delayed-এর হিসাব। শুধু দেখা ও print — entry হয় T&A পাতায়।',
+                'steps' => [
+                    'Buyer / status / due তারিখ দিয়ে filter করে Print করুন।',
+                    'তারিখ, owner বা remarks বদলাতে T&A নম্বরে click করে T&A পাতায় যান।',
+                    '* চিহ্নের কলাম (Department, Dependency, Corrective Action) এখনো system-এ entry হয় না, তাই খালি থাকে।',
+                ],
+                'example' => 'Fit Approval-এর plan 08-Nov, actual 10-Nov → Completed (Late), Delay Days 2। আজ 12-Nov আর PP Approval-এর plan 10-Nov, actual নেই → Delayed, Delay Days 2।',
+                'before' => 'T&A Plan',
+                'after' => 'Merchandising follow-up / management review',
+            ],
+            'capacity-calendar' => [
+                'title' => 'Capacity Calendar (Factory Capacity Per Day)',
+                'what' => 'প্রতিটা line-এর প্রতিদিনের capacity: কত মিনিট কাজ হবে, আর ওই দিনের style-এর SMV দিয়ে কত পিস বানানো সম্ভব (Gross ও Net)। কোনো entry লাগে না — Lines setup, ছুটির তালিকা, Sewing board আর T&A থেকে নিজে আসে।',
+                'steps' => [
+                    'তারিখ (থেকে–পর্যন্ত) আর line বেছে Filter, তারপর Print।',
+                    'Operators / Helpers / Regular hours / Efficiency বদলাতে Planning → Setup → Lines।',
+                    'কোন দিন কোন style, SMV আর working hours (OT সহ) — Production → Sewing board-এর plan; plan না থাকলে T&A-র sewing তারিখ থেকে।',
+                    'SMV না থাকলে (কোনো style চলছে না) Gross / Net খালি থাকে।',
+                ],
+                'example' => '36 operator × (10 + 2 OT) ঘণ্টা × 60 = 25,920 মিনিট; SMV 20, efficiency 60% → Gross 1,296, Net 778 পিস।',
+                'before' => 'Lines / Holidays / Sewing plan / T&A',
+                'after' => 'Order booking ও T&A plan',
+            ],
 
             // ---------------------------------------------------------------- Production
             'production.status' => [

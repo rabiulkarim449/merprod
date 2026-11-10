@@ -65,6 +65,8 @@ class MasterRegistry
                     // Unique per buyer, not globally — two different buyers legitimately reuse the same style number.
                     ['name' => 'style_no', 'label' => 'Style No', 'type' => 'text', 'required' => true, 'unique' => true, 'unique_scope' => 'buyer_id', 'max' => 100],
                     ['name' => 'name', 'label' => 'Style Name', 'type' => 'text', 'required' => true, 'max' => 255],
+                    // Customs code printed on the commercial invoice line.
+                    ['name' => 'hs_code', 'label' => 'HS Code', 'type' => 'text', 'max' => 30],
                     ['name' => 'season_id', 'label' => 'Season', 'type' => 'select', 'options' => $active(Models\Season::class), 'exists' => 'msfl_seasons'],
                     ['name' => 'product_type_id', 'label' => 'Product Type', 'type' => 'select', 'options' => $active(Models\ProductType::class), 'exists' => 'msfl_product_types'],
                     ['name' => 'color_id', 'label' => 'Color', 'type' => 'select', 'options' => $active(Models\Color::class), 'exists' => 'inv_colors'],
@@ -72,6 +74,7 @@ class MasterRegistry
                 'columns' => [
                     ['label' => 'Style No', 'value' => 'style_no'],
                     ['label' => 'Name', 'value' => 'name'],
+                    ['label' => 'HS Code', 'value' => fn ($m) => $m->hs_code ?: '-'],
                     ['label' => 'Buyer', 'value' => fn ($m) => $m->buyer->name ?? '-'],
                     ['label' => 'Season', 'value' => fn ($m) => $m->season->name ?? '-'],
                     ['label' => 'Product Type', 'value' => fn ($m) => $m->productType->name ?? '-'],

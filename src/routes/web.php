@@ -25,6 +25,7 @@ use ME\MerchandisingSfl\Http\Controllers\Production\StatusController;
 use ME\MerchandisingSfl\Services\ProductionFlow;
 use ME\MerchandisingSfl\Http\Controllers\SampleController;
 use ME\MerchandisingSfl\Http\Controllers\StyleController;
+use ME\MerchandisingSfl\Http\Controllers\TnaCalendarController;
 use ME\MerchandisingSfl\Http\Controllers\TnaPlanController;
 use ME\MerchandisingSfl\Http\Controllers\TnaSheetController;
 use ME\MerchandisingSfl\Http\Controllers\TnaTemplateController;
@@ -111,6 +112,10 @@ Route::middleware($route['middleware'] ?? ['web', 'auth'])
         Route::post('tna/{tna}/status', [TnaPlanController::class, 'changeStatus'])->name('tna.status');
         Route::get('tna-sheet', [TnaSheetController::class, 'index'])->name('tna-sheet.index');
         Route::get('tna-sheet/print', [TnaSheetController::class, 'print'])->name('tna-sheet.print');
+        Route::get('tna-calendar', [TnaCalendarController::class, 'index'])->name('tna-calendar.index');
+        Route::get('tna-calendar/print', [TnaCalendarController::class, 'print'])->name('tna-calendar.print');
+        Route::get('capacity-calendar', [\ME\MerchandisingSfl\Http\Controllers\CapacityCalendarController::class, 'index'])->name('capacity-calendar.index');
+        Route::get('capacity-calendar/print', [\ME\MerchandisingSfl\Http\Controllers\CapacityCalendarController::class, 'print'])->name('capacity-calendar.print');
 
         // Reports
         Route::get('reports', [ReportController::class, 'index'])->name('reports.index');

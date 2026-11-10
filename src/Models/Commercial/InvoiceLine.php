@@ -11,7 +11,7 @@ class InvoiceLine extends Model
 {
     protected $table = 'msfl_com_invoice_lines';
 
-    protected $fillable = ['invoice_id', 'order_po_id', 'qty', 'unit_price', 'amount', 'cartons'];
+    protected $fillable = ['invoice_id', 'order_po_id', 'qty', 'unit_price', 'amount', 'cartons', 'remarks'];
 
     protected $casts = ['unit_price' => 'decimal:4', 'amount' => 'decimal:2'];
 

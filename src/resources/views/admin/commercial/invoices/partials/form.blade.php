@@ -1,6 +1,6 @@
 {{--
     Commercial invoice: shipping fields + carton packing list.
-    props: invoice, lc (active ExportLc), avail (po_id => [po, sizes, packed, invoiced, free]), sizes (union, XS → 3XL), cartonRows, shipModes
+    props: invoice, lc (active ExportLc), avail (po_id => [po, sizes, packed, invoiced, free]), sizes (union, XS → 3XL), cartonRows, lineRemarks (po_id => text), shipModes
 --}}
 @php $cur = $lc->currency->code ?? ''; @endphp
 <input type="hidden" name="export_lc_id" value="{{ $lc->id }}">
@@ -21,10 +21,25 @@
     @include('merchandising-sfl::admin.partials.input', ['name' => 'remarks', 'label' => 'Remarks', 'value' => $invoice->remarks])
 </div>
 
+<h6 class="mt-1">Sales Invoice details <small class="text-muted">— printed on the Commercial Invoice; empty consignee = the buyer, empty shipment date = the B/L date</small></h6>
+<div class="row">
+    @include('merchandising-sfl::admin.partials.input', ['name' => 'consignee_name', 'label' => 'Consignee', 'value' => $invoice->consignee_name, 'attrs' => 'placeholder="' . e($lc->buyer->name ?? 'Same as buyer') . '"'])
+    @include('merchandising-sfl::admin.partials.input', ['name' => 'consignee_address', 'label' => 'Consignee Address', 'type' => 'textarea', 'rows' => 1, 'value' => $invoice->consignee_address, 'attrs' => 'placeholder="Same as buyer"'])
+    @include('merchandising-sfl::admin.partials.input', ['name' => 'country_of_origin', 'label' => 'Country of Origin', 'value' => $invoice->country_of_origin])
+    @include('merchandising-sfl::admin.partials.input', ['name' => 'shipment_date', 'label' => 'Shipment Date', 'type' => 'date', 'value' => $invoice->shipment_date])
+
+    @include('merchandising-sfl::admin.partials.input', ['name' => 'exchange_rate', 'label' => 'Exchange Rate (' . ($cur ?: 'currency') . ' → BDT)', 'type' => 'number', 'value' => $invoice->exchange_rate])
+    @include('merchandising-sfl::admin.partials.input', ['name' => 'discount', 'label' => 'Discount (' . $cur . ')', 'type' => 'number', 'value' => $invoice->discount])
+    @include('merchandising-sfl::admin.partials.input', ['name' => 'freight_other', 'label' => 'Freight / Other (' . $cur . ')', 'type' => 'number', 'value' => $invoice->freight_other])
+    @include('merchandising-sfl::admin.partials.input', ['name' => 'advance_received', 'label' => 'Advance Received (' . $cur . ')', 'type' => 'number', 'value' => $invoice->advance_received])
+
+    @include('merchandising-sfl::admin.partials.input', ['name' => 'special_declaration', 'label' => 'Bank Details / Special Declaration (extra text)', 'type' => 'textarea', 'col' => 12, 'value' => $invoice->special_declaration, 'attrs' => 'placeholder="The LC\'s lien / advising bank prints by itself — add any declaration here"'])
+</div>
+
 <h6 class="mt-2">Can ship <small class="text-muted">— per size: packed in production − already on other invoices</small></h6>
 <div class="table-responsive">
     <table class="table table-bordered table-sm mb-3">
-        <thead><tr><th>PO · Style · Color</th>@foreach($sizes as $s)<th class="text-center">{{ $s->name }}</th>@endforeach<th class="text-right">Total</th><th class="text-right">FOB</th></tr></thead>
+        <thead><tr><th>PO · Style · Color</th>@foreach($sizes as $s)<th class="text-center">{{ $s->name }}</th>@endforeach<th class="text-right">Total</th><th class="text-right">FOB</th><th style="min-width:180px">Line Remarks</th></tr></thead>
         <tbody>
             @forelse($avail as $poId => $a)
                 <tr>
@@ -34,9 +49,10 @@
                     @endforeach
                     <td class="text-right font-weight-bold">{{ array_sum($a['free']) }}</td>
                     <td class="text-right">{{ number_format((float) $a['po']->unit_price, 4) }}</td>
+                    <td><input type="text" name="line_remarks[{{ $poId }}]" class="form-control form-control-sm" maxlength="255" value="{{ $lineRemarks[$poId] ?? '' }}"></td>
                 </tr>
             @empty
-                <tr><td colspan="{{ $sizes->count() + 3 }}" class="text-center text-muted">This LC has no PO.</td></tr>
+                <tr><td colspan="{{ $sizes->count() + 4 }}" class="text-center text-muted">This LC has no PO.</td></tr>
             @endforelse
         </tbody>
     </table>
