@@ -17,7 +17,7 @@ return [
         'msfl_dashboard' => ['label' => 'Dashboard', 'permissions' => ['view' => 'View', 'all' => 'All']],
         // Shows the "এই পাতা কী কাজে" help box (Support/PageHelp) on every screen.
         'msfl_page_help' => ['label' => 'Page Help (এই পাতা কী কাজে)', 'permissions' => ['view' => 'View']],
-        'msfl_inventory_sync' => ['label' => 'Sync from Inventory (Buyers / Styles)', 'permissions' => ['view' => 'View', 'sync' => 'Run Sync']],
+        'msfl_inventory_sync' => ['label' => 'Sync from Inventory (Buyers / Styles / Items)', 'permissions' => ['view' => 'View', 'sync' => 'Run Sync']],
 
         // Master Data
         'msfl_buyer' => ['label' => 'Buyers', 'permissions' => $master + ['approve' => 'Approve / Reject']],

@@ -61,6 +61,51 @@
                         </table>
                     </div>
                 @endif
+
+                <hr>
+                <h6>Pending Items (Fabric &amp; Trims) <span class="badge badge-secondary">{{ $pendingItems->count() }}</span></h6>
+                <p class="text-muted small mb-2">
+                    Store-এর যে item এখনো Merchandising-এর Items-এ নেই — Sync করলে Merchandising Item তৈরি হবে আর Store item-এর সাথে যুক্ত থাকবে
+                    (BOM-এ বাছাই করা যাবে, MRP সেই সংযোগ দিয়ে Store-এর stock / purchase / GRN পড়বে)। একই Code-এর Merchandising item আগে থেকে থাকলে নতুন না বানিয়ে শুধু যুক্ত করা হবে।
+                    শুধু টিক দেওয়া category-র item আসবে।
+                </p>
+                @if($itemCategories->isEmpty())
+                    <p class="text-muted small">Store-এর সব item-ই আগে থেকে Merchandising-এর সাথে যুক্ত — কিছু বাকি নেই।</p>
+                @else
+                    <form method="GET" class="mb-2">
+                        <div class="d-flex flex-wrap gap-2 mb-2">
+                            @foreach($itemCategories as $c)
+                                <div class="custom-control custom-checkbox mr-3">
+                                    <input type="checkbox" class="custom-control-input" name="cats[]" value="{{ $c->id }}" id="cat{{ $c->id }}" @checked(in_array($c->id, $pickedCategories, true))>
+                                    <label class="custom-control-label" for="cat{{ $c->id }}">{{ $c->name }} <span class="text-muted">({{ $c->pending }})</span></label>
+                                </div>
+                            @endforeach
+                        </div>
+                        <button type="submit" class="btn btn-sm ui-act ui-act-filter" title="Show"><i class="fa-solid fa-filter"></i> Show</button>
+                    </form>
+
+                    @if($pendingItems->isNotEmpty())
+                        @can('msfl_inventory_sync.sync')
+                            <form method="POST" action="{{ route('msfl.inventory-sync.items') }}" class="mb-2" onsubmit="return confirm('{{ $pendingItems->count() }} item Merchandising-এ তৈরি / যুক্ত করা হবে। চালিয়ে যাবেন?');">
+                                @csrf
+                                @foreach($pickedCategories as $id)<input type="hidden" name="cats[]" value="{{ $id }}">@endforeach
+                                <button type="submit" class="btn btn-sm ui-act ui-act-reset" title="Sync Items"><i class="fa-solid fa-rotate-left"></i> Sync {{ $pendingItems->count() }} Items</button>
+                            </form>
+                        @endcan
+                        <div class="table-responsive" style="max-height: 50vh; overflow: auto;">
+                            <table class="table table-bordered table-sm">
+                                <thead><tr><th>#</th><th>Code</th><th>Name</th><th>Category</th><th>Unit</th></tr></thead>
+                                <tbody>
+                                    @foreach($pendingItems as $i)
+                                        <tr><td>{{ $loop->iteration }}</td><td>{{ $i->item_code }}</td><td>{{ $i->item_name }}</td><td>{{ $i->category }}</td><td>{{ $i->unit }}</td></tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @else
+                        <p class="text-muted small">কোনো category টিক দেওয়া নেই।</p>
+                    @endif
+                @endif
             @endif
         </div>
     </div>

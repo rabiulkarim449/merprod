@@ -12,9 +12,9 @@
     $statusClass = function ($v) {
         return match ((string) $v) {
             'Critical', 'Blocked', 'Loss', 'Failed', 'Fail', 'Open' => 'st-red',
-            'High', 'At Risk', 'Below Target', 'On Hold', 'Short Shipped', 'Excess Shipped' => 'st-orange',
-            'Medium', 'In Progress', 'Pending', 'Re-inspection' => 'st-yellow',
-            'Ready', 'OK', 'Closed', 'Approved', 'On Target', 'Released', 'Low', 'Pass', 'Passed', 'Cleared' => 'st-green',
+            'High', 'At Risk', 'Below Target', 'On Hold', 'Short Shipped', 'Excess Shipped', 'Short' => 'st-orange',
+            'Medium', 'In Progress', 'Pending', 'Re-inspection', 'On Order', 'Partly Passed' => 'st-yellow',
+            'Ready', 'OK', 'Closed', 'Approved', 'On Target', 'Released', 'Low', 'Pass', 'Passed', 'Cleared', 'In-house' => 'st-green',
             default => '',
         };
     };

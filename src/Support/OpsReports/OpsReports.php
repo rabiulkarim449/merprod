@@ -9,6 +9,7 @@ class OpsReports
         'shipment-readiness' => ShipmentReadiness::class,
         'pre-production' => PreProductionReadiness::class,
         'material-shortage' => MaterialShortage::class,
+        'mrp' => MaterialRequirementPlan::class,
         'cutting-daily' => CuttingDaily::class,
         'quality-dhu-rft' => QualityDhuRft::class,
         'finishing-packing' => FinishingPacking::class,

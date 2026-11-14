@@ -47,7 +47,7 @@
             <form method="POST" action="{{ route('msfl.ops-reports.save', ['report' => $report->key()] + request()->query()) }}" id="opsForm">
                 @csrf
                 @include('merchandising-sfl::admin.ops-reports.partials.sheet', ['editable' => $canEdit, 'print' => false])
-                @if($canEdit && count($built['rows']) + count($report->settingsShown()))
+                @if($canEdit && $report->hasTypedCells() && count($built['rows']) + count($report->settingsShown()))
                     <div class="mt-2 d-flex align-items-center gap-2">
                         <button type="submit" class="btn btn-sm ui-act ui-act-save" title="Save changes"><i class="fa-solid fa-floppy-disk"></i> Save changes</button>
                         <span class="small text-muted" id="opsChanged">No changes yet.</span>

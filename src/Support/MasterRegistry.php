@@ -159,9 +159,15 @@ class MasterRegistry
                     ['name' => 'composition', 'label' => 'Composition', 'type' => 'text'],
                     ['name' => 'gsm', 'label' => 'GSM', 'type' => 'decimal'],
                     ['name' => 'description', 'label' => 'Description', 'type' => 'textarea', 'col' => 12],
+                    // Which store item this is (MRP reads its stock / purchase / GRN). Only when Inventory is installed.
+                    ...(\Illuminate\Support\Facades\Schema::hasTable('inv_items') ? [[
+                        'name' => 'inv_item_id', 'label' => 'Inventory Item (store)', 'type' => 'select', 'col' => 12,
+                        'options' => fn () => Models\Item::inventoryOptions(), 'exists' => 'inv_items', 'unique' => 'active',
+                    ]] : []),
                 ],
                 'columns' => [
                     ...$codeName,
+                    ...(\Illuminate\Support\Facades\Schema::hasTable('inv_items') ? [['label' => 'Inventory Item', 'value' => fn ($m) => $m->inventoryLabel() ?? '-']] : []),
                     ['label' => 'Type', 'value' => fn ($m) => self::itemTypes()[$m->type] ?? $m->type],
                     ['label' => 'Category', 'value' => fn ($m) => $m->category->name ?? '-'],
                     ['label' => 'Unit', 'value' => fn ($m) => $m->uom->code ?? '-'],

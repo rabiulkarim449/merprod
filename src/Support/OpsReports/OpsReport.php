@@ -63,6 +63,13 @@ abstract class OpsReport
         return [];
     }
 
+    /** Whether anything on the report is typed (input columns or settings) — a view-only report hides Save. */
+    public function hasTypedCells(): bool
+    {
+        return collect($this->columns())->contains(fn ($c) => in_array($c['kind'], ['input', 'auto_input'], true))
+            || $this->settingsShown() !== [];
+    }
+
     /** Signature captions under the printed report. */
     public function signatures(): array
     {
