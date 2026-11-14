@@ -120,6 +120,7 @@ return [
                         ['title' => 'Shipment Readiness & Risk', 'icon' => 'fa-solid fa-ship', 'icon_color' => 'text-primary', 'permission' => 'msfl_report', 'route' => "$base/ops-reports/shipment-readiness"],
                         ['title' => 'Pre-Production Readiness', 'icon' => 'fa-solid fa-list-check', 'icon_color' => 'text-primary', 'permission' => 'msfl_report', 'route' => "$base/ops-reports/pre-production"],
                         ['title' => 'Material Shortage', 'icon' => 'fa-solid fa-triangle-exclamation', 'icon_color' => 'text-primary', 'permission' => 'msfl_report', 'route' => "$base/ops-reports/material-shortage"],
+                        ['title' => 'Material Requirement Plan (MRP)', 'icon' => 'fa-solid fa-boxes-packing', 'icon_color' => 'text-primary', 'permission' => 'msfl_report', 'route' => "$base/ops-reports/mrp"],
                         ['title' => 'Daily Cutting Production', 'icon' => 'fa-solid fa-scissors', 'icon_color' => 'text-primary', 'permission' => 'msfl_report', 'route' => "$base/ops-reports/cutting-daily"],
                         ['title' => 'Daily Quality DHU & RFT', 'icon' => 'fa-solid fa-magnifying-glass-chart', 'icon_color' => 'text-primary', 'permission' => 'msfl_report', 'route' => "$base/ops-reports/quality-dhu-rft"],
                         ['title' => 'Daily Finishing & Packing', 'icon' => 'fa-solid fa-box', 'icon_color' => 'text-primary', 'permission' => 'msfl_report', 'route' => "$base/ops-reports/finishing-packing"],

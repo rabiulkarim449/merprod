@@ -828,6 +828,34 @@ class PageHelp
                 'DEMO style-এ Hang tag লাগবে 1000, এসেছে 600 → 400 কম (40%), PCD পার হয়ে গেছে → Critical।',
                 'GRN · Requisition', 'Cutting'),
 
+            // View / print only — no typed cells, so the usual "type in yellow, Save" steps are replaced.
+            'ops-reports.mrp' => ['steps' => [
+                'উপরে Buyer / Style বেছে <strong>Filter</strong>, তারপর <strong>Print</strong>। এই রিপোর্টে কিছু লেখা যায় না — সব ঘর entry থেকে আসে।',
+                'রঙের মানে: <strong>সাদা</strong> = Order / BOM / Store-এর entry থেকে · <strong>নীল</strong> = formula, নিজে হিসাব হয়।',
+                'কোনো ঘর খালি থাকলে সেটা যে entry থেকে আসে সেখানে দিন: BOM-এ Order বাছাই, Items → Inventory Item, Purchase Requisition-এ Style, GRN পাতায় Inspection।',
+            ]] + $ops('Material Requirement Plan (MRP)',
+                'Order-এর প্রতিটা style-এর BOM থেকে প্রতিটা fabric / trims / packing: কত লাগবে, কত অর্ডার হয়েছে, কত এসেছে, inspection আর কত কম। শুধু দেখা ও print — সব ঘর entry থেকে আসে।',
+                ['Order-এ BOM বানান (Order বাছাই করে); BOM-এর item Store item-এর সাথে যুক্ত রাখুন (Master Data → Items → Inventory Item, বা Sync from Inventory)।',
+                    'Store: order-এর জন্য কেনা হলে Purchase Requisition-এ Buyer / Style / PO দিন; মাল এলে GRN, তারপর GRN পাতায় Inspection।'],
+                [
+                    $sys => [
+                        'Buyer / Style / PO / Order Qty' => 'Order — style-এর PO-গুলো; Order Qty BOM line-এর color / size অনুযায়ী।',
+                        'Material / Code / Category / Color / Size / UOM / Consumption / Wastage / Supplier / Remarks' => 'BOM line ও Item।',
+                        'Required Date' => 'Style-এর PO-গুলোর সবচেয়ে আগের PCD।',
+                        'PO / Booking Ref, Expected In-House, On Order' => 'Store Order (style-এর Purchase Requisition থেকে) — নম্বর, Expected Date, অর্ডার − এসেছে।',
+                        'Received / Inspection / Approved' => 'Style-এর posted GRN — এসেছে; GRN পাতার Inspection; Passed / Partly Passed লাইনের এসেছে − Rejected।',
+                    ],
+                    $calc => [
+                        'Gross Requirement' => 'Order Qty × Consumption।',
+                        'Net Requirement' => 'Gross × (1 + Wastage %)।',
+                        'Stock + On Order' => 'Received + On Order।',
+                        'Shortage Qty' => 'Net − (Stock + On Order), কম হলে 0।',
+                        'Status' => '<strong>In-house</strong> (সব এসেছে), <strong>On Order</strong> (বাকিটা অর্ডারে), <strong>Short</strong>, <strong>Critical</strong> (কম আর PCD ৩ দিন বা কম / পার), <strong>No Store Link</strong> (item Store-এর সাথে যুক্ত নয়)।',
+                    ],
+                ],
+                '500 pcs, consumption 1.5 m, wastage 4% → Gross 750, Net 780; এসেছে 500, অর্ডারে 200 → Shortage 80, Short।',
+                'Order · BOM · Purchase Requisition · GRN', 'Cutting'),
+
             'ops-reports.cutting-daily' => $ops('Daily Cutting Production Report',
                 'একদিনের cutting: plan বনাম আসল কাটা, reject, recut, কত বাকি আর কাপড় খরচ ঠিক আছে কিনা। সেদিন কাটা হয়েছে, এখনো কাটা চলছে বা সপ্তাহের মধ্যে PCD — এমন PO দেখায়।',
                 ['Planned Cut, Recut Qty, Marker Efficiency % লিখুন; BOM না থাকলে Standard Cons./Pc লিখুন।'],

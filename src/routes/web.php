@@ -53,6 +53,7 @@ Route::middleware($route['middleware'] ?? ['web', 'auth'])
         // Pull existing Inventory Buyers / Styles into Merchandising's own masters.
         Route::get('inventory-sync', [InventorySyncController::class, 'index'])->name('inventory-sync.index');
         Route::post('inventory-sync', [InventorySyncController::class, 'sync'])->name('inventory-sync.sync');
+        Route::post('inventory-sync/items', [InventorySyncController::class, 'syncItems'])->name('inventory-sync.items');
 
         // Uploaded files (tech packs, BOM files, attachments, images) — served from the upload disk.
         Route::get('files/{path}', [\ME\MerchandisingSfl\Http\Controllers\FileController::class, 'show'])->where('path', '.*')->name('files.show');

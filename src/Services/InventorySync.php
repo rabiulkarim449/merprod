@@ -144,6 +144,132 @@ class InventorySync
         return ['created' => $created, 'skipped' => $skipped];
     }
 
+    /** Store categories a BOM uses (fabric, trims, accessories, labels, packing, thread) — ticked by default on the sync page. */
+    public const DEFAULT_ITEM_CATEGORY_WORDS = ['fabric', 'jacq', 'trim', 'button', 'accessor', 'label', 'decor', 'packag', 'packing', 'yarn', 'thread'];
+
+    /** Inventory item categories with how many of their items are not in Merchandising yet: [id => {name, pending, default}]. */
+    public function itemCategories(): Collection
+    {
+        if (! Schema::hasTable('inv_items')) {
+            return collect();
+        }
+        $pending = $this->pendingItemsQuery()->selectRaw('i.category_id, count(*) as n')->groupBy('i.category_id')->pluck('n', 'category_id');
+
+        return DB::table('inv_item_categories')->whereNull('deleted_at')->orderBy('name')->get(['id', 'name'])
+            ->map(fn ($c) => (object) [
+                'id' => $c->id, 'name' => $c->name, 'pending' => (int) ($pending[$c->id] ?? 0),
+                'default' => Str::contains(mb_strtolower($c->name), self::DEFAULT_ITEM_CATEGORY_WORDS),
+            ])
+            ->filter(fn ($c) => $c->pending > 0)->values();
+    }
+
+    /** Store items of these categories that no live Merchandising item is linked to yet. */
+    public function pendingItems(array $categoryIds): Collection
+    {
+        if (! Schema::hasTable('inv_items') || ! $categoryIds) {
+            return collect();
+        }
+
+        return $this->pendingItemsQuery()->whereIn('i.category_id', $categoryIds)
+            ->leftJoin('inv_item_categories as c', 'c.id', '=', 'i.category_id')
+            ->leftJoin('inv_units as u', 'u.id', '=', 'i.unit_id')
+            ->orderBy('c.name')->orderBy('i.item_code')
+            ->get(['i.id', 'i.item_code', 'i.item_name', 'i.category_id', 'i.unit_id', 'i.supplier_id', 'i.specification', 'c.name as category', 'u.name as unit']);
+    }
+
+    /**
+     * Creates a Merchandising item for every pending store item of the chosen categories, linked by
+     * inv_item_id (code, name, unit, supplier and a same-named v2 category copied). A live v2 item
+     * with the same code and no link yet is linked instead of duplicated.
+     * Returns ['created' => n, 'linked' => n].
+     */
+    public function syncItems(array $categoryIds): array
+    {
+        $created = $linked = 0;
+        $categories = [];
+
+        foreach ($this->pendingItems($categoryIds) as $inv) {
+            $existing = \ME\MerchandisingSfl\Models\Item::query()->where('code', $inv->item_code)->whereNull('inv_item_id')->first();
+            if ($existing) {
+                $existing->update(['inv_item_id' => $inv->id]);
+                $linked++;
+
+                continue;
+            }
+
+            $type = $this->itemType((string) $inv->category);
+            $categories[$inv->category_id] ??= $this->v2Category((string) $inv->category, $type);
+
+            \ME\MerchandisingSfl\Models\Item::create([
+                'code' => $this->uniqueItemCode($inv->item_code ?: 'ITEM-' . $inv->id),
+                'inv_item_id' => $inv->id,
+                'name' => $inv->item_name,
+                'type' => $type,
+                'category_id' => $categories[$inv->category_id],
+                'uom_id' => $inv->unit_id,
+                'default_supplier_id' => $inv->supplier_id,
+                'description' => $inv->specification,
+                'is_active' => true,
+                'created_by' => auth()->id(),
+            ]);
+            $created++;
+        }
+
+        return ['created' => $created, 'linked' => $linked];
+    }
+
+    private function pendingItemsQuery()
+    {
+        $linked = DB::table('msfl_items')->whereNull('deleted_at')->whereNotNull('inv_item_id')->select('inv_item_id');
+
+        return DB::table('inv_items as i')->whereNull('i.deleted_at')->where('i.item_type', '<>', 'finished_good')
+            ->whereNotIn('i.id', $linked);
+    }
+
+    /** v2 item type from the store category name. */
+    private function itemType(string $category): string
+    {
+        $c = mb_strtolower($category);
+
+        return match (true) {
+            Str::contains($c, ['fabric', 'jacq']) => 'fabric',
+            Str::contains($c, ['packag', 'packing', 'carton', 'poly']) => 'packing',
+            Str::contains($c, ['button', 'accessor', 'label', 'decor']) => 'accessories',
+            default => 'trims',
+        };
+    }
+
+    /** The v2 item category with this name (created when missing). */
+    private function v2Category(string $name, string $type): ?int
+    {
+        if ($name === '') {
+            return null;
+        }
+        $category = \ME\MerchandisingSfl\Models\ItemCategory::query()->whereRaw('LOWER(name) = ?', [mb_strtolower($name)])->first();
+        if ($category) {
+            return $category->id;
+        }
+
+        $base = Str::upper(Str::slug($name, '-')) ?: 'CAT';
+        $code = $base;
+        for ($n = 2; \ME\MerchandisingSfl\Models\ItemCategory::withTrashed()->where('code', $code)->exists(); $n++) {
+            $code = "{$base}-{$n}";
+        }
+
+        return \ME\MerchandisingSfl\Models\ItemCategory::create(['code' => $code, 'name' => $name, 'type' => $type, 'is_active' => true, 'created_by' => auth()->id()])->id;
+    }
+
+    private function uniqueItemCode(string $base): string
+    {
+        $base = Str::limit(trim($base), 45, '');
+        $code = $base;
+        for ($n = 2; \ME\MerchandisingSfl\Models\Item::withTrashed()->where('code', $code)->exists(); $n++) {
+            $code = "{$base}-{$n}";
+        }
+
+        return $code;
+    }
+
     private function uniqueBuyerCode(string $base): string
     {
         $base = Str::upper(Str::slug($base, '')) ?: 'BUYER';
