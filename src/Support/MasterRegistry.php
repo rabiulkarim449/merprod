@@ -43,14 +43,14 @@ class MasterRegistry
                     ['name' => 'email', 'label' => 'Email', 'type' => 'email'],
                     ['name' => 'payment_term_id', 'label' => 'Payment Term', 'type' => 'select', 'options' => fn () => Models\Commercial\PaymentTerm::query()->active()->orderBy('days')->orderBy('name')->pluck('name', 'id')->all(), 'exists' => 'msfl_com_payment_terms'],
                     ['name' => 'delivery_term', 'label' => 'Delivery Term', 'type' => 'select', 'options' => Models\Order::DELIVERY_TERMS],
-                    ['name' => 'buyer_type', 'label' => 'Type', 'type' => 'select', 'required' => true, 'options' => Models\Buyer::TYPES, 'default' => 'export'],
+                    // Plain select (no search box, no empty option): Export first, so it is the default.
+                    ['name' => 'buyer_type', 'label' => 'Type', 'type' => 'select', 'required' => true, 'options' => Models\Buyer::TYPES, 'default' => 'export', 'plain' => true],
                     ['name' => 'address', 'label' => 'Address', 'type' => 'textarea', 'col' => 12],
                 ],
-                // A local buyer's row is shown bold.
-                'row_class' => fn ($m) => $m->buyer_type === 'local' ? 'font-weight-bold' : '',
                 'columns' => [
-                    ...$codeName,
-                    ['label' => 'Type', 'value' => fn ($m) => Models\Buyer::TYPES[$m->buyer_type] ?? 'Export'],
+                    // A local buyer's code is shown bold.
+                    ['label' => 'Code', 'value' => 'code', 'class' => fn ($m) => $m->buyer_type === 'local' ? 'font-weight-bold' : ''],
+                    ['label' => 'Name', 'value' => 'name'],
                     ['label' => 'Country', 'value' => 'country'],
                     ['label' => 'Merchandiser', 'value' => fn ($m) => $m->merchandiser->name ?? '-'],
                     ['label' => 'Contact', 'value' => fn ($m) => collect([$m->contact_person, $m->phone])->filter()->implode(' / ') ?: '-'],
