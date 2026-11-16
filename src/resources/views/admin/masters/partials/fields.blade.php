@@ -22,8 +22,9 @@
                 <label class="form-label">{{ $field['label'] }} @if(! empty($field['required']))<span class="text-danger">*</span>@endif</label>
                 @switch($field['type'])
                     @case('select')
-                        <select name="{{ $name }}" class="form-control form-control-sm msfl-select2" @required(! empty($field['required']))>
-                            <option value="">— Select —</option>
+                        {{-- 'plain' => a short fixed list: ordinary select, no search box, no empty option. --}}
+                        <select name="{{ $name }}" class="form-control form-control-sm {{ empty($field['plain']) ? 'msfl-select2' : '' }}" @required(! empty($field['required']))>
+                            @if(empty($field['plain']))<option value="">— Select —</option>@endif
                             @foreach($field['options'] ?? [] as $optionValue => $optionLabel)
                                 <option value="{{ $optionValue }}" @selected((string) $value === (string) $optionValue)>{{ $optionLabel }}</option>
                             @endforeach

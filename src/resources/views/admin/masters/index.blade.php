@@ -70,10 +70,10 @@
                     </thead>
                     <tbody>
                         @forelse($records as $record)
-                            <tr class="{{ isset($definition['row_class']) ? $definition['row_class']($record) : '' }}">
+                            <tr>
                                 <td>{{ $loop->iteration + $records->firstItem() - 1 }}</td>
                                 @foreach($definition['columns'] as $column)
-                                    <td>{{ \ME\MerchandisingSfl\Support\MasterRegistry::columnValue($column, $record) }}</td>
+                                    <td @isset($column['class']) class="{{ $column['class']($record) }}" @endisset>{{ \ME\MerchandisingSfl\Support\MasterRegistry::columnValue($column, $record) }}</td>
                                 @endforeach
                                 <td>
                                     <span class="badge badge-{{ $record->is_active ? 'success' : 'secondary' }}">
