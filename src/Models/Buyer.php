@@ -25,7 +25,10 @@ class Buyer extends Model
 
     protected $table = 'msfl_buyers';
 
-    protected $fillable = ['code', 'name', 'short_name', 'merchandiser_id', 'country', 'agent_name', 'contact_person', 'phone', 'email', 'address', 'payment_term_id', 'delivery_term', 'is_active', 'created_by'];
+    /** Buyer type => label. Existing buyers are export. */
+    public const TYPES = ['export' => 'Export', 'local' => 'Local'];
+
+    protected $fillable = ['code', 'name', 'buyer_type', 'short_name', 'merchandiser_id', 'country', 'agent_name', 'contact_person', 'phone', 'email', 'address', 'payment_term_id', 'delivery_term', 'is_active', 'created_by'];
 
     protected $casts = ['is_active' => 'boolean', 'approved_at' => 'datetime'];
 

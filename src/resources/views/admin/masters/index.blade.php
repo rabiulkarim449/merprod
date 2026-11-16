@@ -70,7 +70,7 @@
                     </thead>
                     <tbody>
                         @forelse($records as $record)
-                            <tr>
+                            <tr class="{{ isset($definition['row_class']) ? $definition['row_class']($record) : '' }}">
                                 <td>{{ $loop->iteration + $records->firstItem() - 1 }}</td>
                                 @foreach($definition['columns'] as $column)
                                     <td>{{ \ME\MerchandisingSfl\Support\MasterRegistry::columnValue($column, $record) }}</td>
