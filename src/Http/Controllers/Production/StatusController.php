@@ -44,6 +44,9 @@ class StatusController extends Controller
     {
         $this->authorize('msfl_prod_status.list');
 
+        // A PO of a buyer type hidden from this role is not there for it.
+        abort_unless(OrderPo::query()->whereKey($po->id)->exists(), 404);
+
         $po->load(['order.buyer', 'style', 'color', 'sizes.size']);
 
         return view('merchandising-sfl::admin.production.status.show', [

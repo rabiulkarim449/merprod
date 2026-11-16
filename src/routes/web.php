@@ -6,6 +6,7 @@ use ME\MerchandisingSfl\Http\Controllers\BulletinController;
 use ME\MerchandisingSfl\Http\Controllers\Commercial;
 use ME\MerchandisingSfl\Http\Controllers\CostSheetController;
 use ME\MerchandisingSfl\Http\Controllers\DashboardController;
+use ME\MerchandisingSfl\Http\Middleware\HideBuyers; // report pages obey the role's "Hide Export / Local Buyer" ticks
 use ME\MerchandisingSfl\Http\Controllers\InquiryController;
 use ME\MerchandisingSfl\Http\Controllers\InventorySyncController;
 use ME\MerchandisingSfl\Http\Controllers\LearningCurveController;
@@ -48,7 +49,7 @@ Route::middleware($route['middleware'] ?? ['web', 'auth'])
                 Route::delete('{id}', [MasterController::class, 'destroy'])->whereNumber('id')->name('destroy');
             });
 
-        Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+        Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware(HideBuyers::class);
 
         // Pull existing Inventory Buyers / Styles into Merchandising's own masters.
         Route::get('inventory-sync', [InventorySyncController::class, 'index'])->name('inventory-sync.index');
@@ -111,28 +112,28 @@ Route::middleware($route['middleware'] ?? ['web', 'auth'])
         Route::put('tna/{tna}/tasks', [TnaPlanController::class, 'updateTasks'])->name('tna.tasks.update');
         Route::post('tna/{tna}/recalculate', [TnaPlanController::class, 'recalculate'])->name('tna.recalculate');
         Route::post('tna/{tna}/status', [TnaPlanController::class, 'changeStatus'])->name('tna.status');
-        Route::get('tna-sheet', [TnaSheetController::class, 'index'])->name('tna-sheet.index');
-        Route::get('tna-sheet/print', [TnaSheetController::class, 'print'])->name('tna-sheet.print');
-        Route::get('tna-calendar', [TnaCalendarController::class, 'index'])->name('tna-calendar.index');
-        Route::get('tna-calendar/print', [TnaCalendarController::class, 'print'])->name('tna-calendar.print');
-        Route::get('capacity-calendar', [\ME\MerchandisingSfl\Http\Controllers\CapacityCalendarController::class, 'index'])->name('capacity-calendar.index');
-        Route::get('capacity-calendar/print', [\ME\MerchandisingSfl\Http\Controllers\CapacityCalendarController::class, 'print'])->name('capacity-calendar.print');
+        Route::get('tna-sheet', [TnaSheetController::class, 'index'])->name('tna-sheet.index')->middleware(HideBuyers::class);
+        Route::get('tna-sheet/print', [TnaSheetController::class, 'print'])->name('tna-sheet.print')->middleware(HideBuyers::class);
+        Route::get('tna-calendar', [TnaCalendarController::class, 'index'])->name('tna-calendar.index')->middleware(HideBuyers::class);
+        Route::get('tna-calendar/print', [TnaCalendarController::class, 'print'])->name('tna-calendar.print')->middleware(HideBuyers::class);
+        Route::get('capacity-calendar', [\ME\MerchandisingSfl\Http\Controllers\CapacityCalendarController::class, 'index'])->name('capacity-calendar.index')->middleware(HideBuyers::class);
+        Route::get('capacity-calendar/print', [\ME\MerchandisingSfl\Http\Controllers\CapacityCalendarController::class, 'print'])->name('capacity-calendar.print')->middleware(HideBuyers::class);
 
         // Reports
-        Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
-        Route::get('reports/{report}', [ReportController::class, 'show'])->whereIn('report', array_keys(Reports::LIST))->name('reports.show');
-        Route::get('reports/{report}/print', [ReportController::class, 'print'])->whereIn('report', array_keys(Reports::LIST))->name('reports.print');
+        Route::get('reports', [ReportController::class, 'index'])->name('reports.index')->middleware(HideBuyers::class);
+        Route::get('reports/{report}', [ReportController::class, 'show'])->whereIn('report', array_keys(Reports::LIST))->name('reports.show')->middleware(HideBuyers::class);
+        Route::get('reports/{report}/print', [ReportController::class, 'print'])->whereIn('report', array_keys(Reports::LIST))->name('reports.print')->middleware(HideBuyers::class);
 
         // Operations reports (Excel-template layouts with typed cells)
         $opsKeys = array_keys(\ME\MerchandisingSfl\Support\OpsReports\OpsReports::LIST);
-        Route::get('ops-reports', [\ME\MerchandisingSfl\Http\Controllers\OpsReportController::class, 'index'])->name('ops-reports.index');
-        Route::get('ops-reports/{report}', [\ME\MerchandisingSfl\Http\Controllers\OpsReportController::class, 'show'])->whereIn('report', $opsKeys)->name('ops-reports.show');
+        Route::get('ops-reports', [\ME\MerchandisingSfl\Http\Controllers\OpsReportController::class, 'index'])->name('ops-reports.index')->middleware(HideBuyers::class);
+        Route::get('ops-reports/{report}', [\ME\MerchandisingSfl\Http\Controllers\OpsReportController::class, 'show'])->whereIn('report', $opsKeys)->name('ops-reports.show')->middleware(HideBuyers::class);
         Route::post('ops-reports/{report}', [\ME\MerchandisingSfl\Http\Controllers\OpsReportController::class, 'save'])->whereIn('report', $opsKeys)->name('ops-reports.save');
-        Route::get('ops-reports/{report}/print', [\ME\MerchandisingSfl\Http\Controllers\OpsReportController::class, 'print'])->whereIn('report', $opsKeys)->name('ops-reports.print');
+        Route::get('ops-reports/{report}/print', [\ME\MerchandisingSfl\Http\Controllers\OpsReportController::class, 'print'])->whereIn('report', $opsKeys)->name('ops-reports.print')->middleware(HideBuyers::class);
 
         // Commercial — Export LC / SC → Commercial Invoice (+ packing list)
         Route::prefix('commercial')->name('commercial.')->group(function () {
-            Route::get('dashboard', [Commercial\DashboardController::class, 'index'])->name('dashboard');
+            Route::get('dashboard', [Commercial\DashboardController::class, 'index'])->name('dashboard')->middleware(HideBuyers::class);
             Route::resource('export-lcs', Commercial\ExportLcController::class);
             Route::post('export-lcs/{export_lc}/status', [Commercial\ExportLcController::class, 'changeStatus'])->name('export-lcs.status');
             Route::resource('invoices', Commercial\InvoiceController::class);
@@ -155,8 +156,8 @@ Route::middleware($route['middleware'] ?? ['web', 'auth'])
 
         // Production — fabric requisition → cutting → stage entries (pcs + QC)
         Route::prefix('production')->name('production.')->group(function () {
-            Route::get('status', [StatusController::class, 'index'])->name('status.index');
-            Route::get('status/{po}', [StatusController::class, 'show'])->name('status.show');
+            Route::get('status', [StatusController::class, 'index'])->name('status.index')->middleware(HideBuyers::class);
+            Route::get('status/{po}', [StatusController::class, 'show'])->name('status.show')->middleware(HideBuyers::class);
 
             Route::resource('requisitions', FabricRequisitionController::class)->only(['index', 'create', 'store', 'show']);
             Route::resource('cuttings', CuttingController::class)->only(['index', 'create', 'store', 'show', 'destroy']);
@@ -177,8 +178,8 @@ Route::middleware($route['middleware'] ?? ['web', 'auth'])
             }
 
             // Daily Hourly Production Report (from the sewing board's figures).
-            Route::get('sewing/hourly-report', [SewingController::class, 'hourlyReport'])->name('hourly-report.index');
-            Route::get('sewing/hourly-report/print', [SewingController::class, 'hourlyReport'])->name('hourly-report.print');
+            Route::get('sewing/hourly-report', [SewingController::class, 'hourlyReport'])->name('hourly-report.index')->middleware(HideBuyers::class);
+            Route::get('sewing/hourly-report/print', [SewingController::class, 'hourlyReport'])->name('hourly-report.print')->middleware(HideBuyers::class);
 
             // Sewing, line by line: board (Daily Production), line input, hourly output.
             // Registered before {stage} so production/sewing opens the board.

@@ -82,7 +82,8 @@ class Lookups
 
     public static function styles(): Collection
     {
-        return Models\Style::query()->active()->orderByDesc('id')->get(['id', 'style_no', 'name', 'buyer_id', 'color_id']);
+        // On report pages a role does not see the styles of a buyer type hidden from it.
+        return BuyerVisibility::buyer(Models\Style::query()->active())->orderByDesc('id')->get(['id', 'style_no', 'name', 'buyer_id', 'color_id']);
     }
 
     public static function inquiries(): Collection

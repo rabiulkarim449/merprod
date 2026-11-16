@@ -17,6 +17,11 @@ use ME\MerchandisingSfl\Models\OrderPo;
 /** Export LC / Sales Contract from a buyer, with the PO lines it covers. */
 class ExportLc extends Model
 {
+    use \ME\MerchandisingSfl\Models\Concerns\BuyerScoped;
+
+    /** Report pages: how this row reaches its buyer (see BuyerVisibility). */
+    public const BUYER_VIA = ['buyer', 'buyer_id'];
+
     use HasAudit;
     use HasStatus;
     use SoftDeletes;

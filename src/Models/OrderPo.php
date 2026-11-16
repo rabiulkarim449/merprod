@@ -10,6 +10,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /** One row = one PO + one style + one color, with its size breakdown. */
 class OrderPo extends Model
 {
+    use \ME\MerchandisingSfl\Models\Concerns\BuyerScoped;
+
+    /** Report pages: how this row reaches its buyer (see BuyerVisibility). */
+    public const BUYER_VIA = ['order', 'order_id'];
+
     use HasAudit;
 
     protected $table = 'msfl_order_pos';

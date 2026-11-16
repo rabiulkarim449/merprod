@@ -62,7 +62,7 @@ class QualityDhuRft extends OpsReport
         // Inspections: sewing hourly output, Buyer QC, and every QC entry (rework repairs and pass-through stage entries aren't inspections).
         $base = DB::table('msfl_prod_entries')->whereNull('deleted_at')->whereBetween('entry_date', [$from, $to])
             ->where(fn ($q) => $q->where('kind', 'qc')->orWhere(fn ($q) => $q->where('kind', 'production')->whereIn('stage', ['sewing', 'final_qc'])))
-            ->when($r->filled('line_id'), fn ($q) => $q->where('line_id', $r->line_id))
+            ->when($r->filled('line_id'), fn ($q) => $q->where('line_id', $r->line_id))->tap(fn ($q) => \ME\MerchandisingSfl\Support\BuyerVisibility::po($q))
             ->when($r->filled('buyer_id'), fn ($q) => $q->whereIn('order_po_id', DB::table('msfl_order_pos as p')->join('msfl_orders as o', 'o.id', '=', 'p.order_id')->where('o.buyer_id', $r->buyer_id)->select('p.id')));
 
         $groups = (clone $base)->selectRaw("entry_date d, COALESCE(line_id, 0) l, order_po_id p, {$point} pt, SUM(pass_qty + rework_qty + reject_qty) checked, SUM(rework_qty + reject_qty) defective, SUM(rework_qty) alt, SUM(reject_qty) rej")

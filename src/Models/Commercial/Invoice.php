@@ -14,6 +14,11 @@ use ME\MerchandisingSfl\Models\ShipMode;
 /** Commercial Invoice (+ packing list figures) shipped against an Export LC. */
 class Invoice extends Model
 {
+    use \ME\MerchandisingSfl\Models\Concerns\BuyerScoped;
+
+    /** Report pages: how this row reaches its buyer (see BuyerVisibility). */
+    public const BUYER_VIA = ['buyer', 'buyer_id'];
+
     use HasAudit;
     use SoftDeletes;
 

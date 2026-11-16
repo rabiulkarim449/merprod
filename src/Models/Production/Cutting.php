@@ -13,6 +13,11 @@ use ME\MerchandisingSfl\Models\OrderPo;
 /** One cutting (lay) for an order PO: pieces cut per size, parts cut, and its bundles. */
 class Cutting extends Model
 {
+    use \ME\MerchandisingSfl\Models\Concerns\BuyerScoped;
+
+    /** Report pages: how this row reaches its buyer (see BuyerVisibility). */
+    public const BUYER_VIA = ['po', 'order_po_id'];
+
     use HasAudit;
     use SoftDeletes;
 
