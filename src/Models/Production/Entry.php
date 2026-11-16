@@ -20,6 +20,11 @@ use ME\MerchandisingSfl\Models\Size;
  */
 class Entry extends Model
 {
+    use \ME\MerchandisingSfl\Models\Concerns\BuyerScoped;
+
+    /** Report pages: how this row reaches its buyer (see BuyerVisibility). */
+    public const BUYER_VIA = ['po', 'order_po_id'];
+
     use HasAudit;
     use SoftDeletes;
 

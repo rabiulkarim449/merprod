@@ -20,7 +20,9 @@ return [
         'msfl_inventory_sync' => ['label' => 'Sync from Inventory (Buyers / Styles / Items)', 'permissions' => ['view' => 'View', 'sync' => 'Run Sync']],
 
         // Master Data
-        'msfl_buyer' => ['label' => 'Buyers', 'permissions' => $master + ['approve' => 'Approve / Reject']],
+        'msfl_buyer' => ['label' => 'Buyers', 'permissions' => $master + ['approve' => 'Approve / Reject',
+            // Reports and dashboards only. Tick ONE to hide that buyer type from the role; both ticked = nothing hidden.
+            'hide_export' => 'Hide Export Buyer (in reports)', 'hide_local' => 'Hide Local Buyer (in reports)']],
         'msfl_season' => ['label' => 'Seasons', 'permissions' => $master],
         'msfl_product_type' => ['label' => 'Product Types', 'permissions' => $master],
         'msfl_wash_type' => ['label' => 'Wash Types', 'permissions' => $master],

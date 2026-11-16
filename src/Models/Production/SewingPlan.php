@@ -14,6 +14,11 @@ use ME\MerchandisingSfl\Models\OrderPo;
  */
 class SewingPlan extends Model
 {
+    use \ME\MerchandisingSfl\Models\Concerns\BuyerScoped;
+
+    /** Report pages: how this row reaches its buyer (see BuyerVisibility). */
+    public const BUYER_VIA = ['po', 'order_po_id'];
+
     protected $table = 'msfl_prod_sewing_plans';
 
     protected $fillable = ['plan_date', 'line_id', 'order_po_id', 'target', 'working_hours', 'smv', 'operators', 'helpers', 'remarks', 'created_by'];

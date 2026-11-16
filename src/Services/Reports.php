@@ -147,6 +147,7 @@ class Reports
             ->whereNull('e.deleted_at')->whereBetween('e.entry_date', [$from->toDateString(), $to->toDateString()])
             ->when($r->filled('stage'), fn ($q) => $q->where('e.stage', $r->stage))
             ->when($r->filled('line_id'), fn ($q) => $q->where('e.line_id', $r->line_id))
+            ->tap(fn ($q) => \ME\MerchandisingSfl\Support\BuyerVisibility::po($q, 'e.order_po_id'))
             ->groupBy('e.stage', 'd.part_name', 'm.code', 'm.name', 'd.defect')
             ->selectRaw("e.stage, d.part_name, CONCAT_WS(' — ', m.code, m.name) machine, d.defect,
                 SUM(CASE WHEN d.type = 'reject' THEN d.qty ELSE 0 END) rj, SUM(CASE WHEN d.type = 'rework' THEN d.qty ELSE 0 END) rw")
@@ -519,7 +520,7 @@ class Reports
         }
         $row = DB::table('inv_shipment_items as si')->join('inv_shipments as s', 's.id', '=', 'si.shipment_id')
             ->join('msfl_order_pos as po', 'po.id', '=', 'si.msfl_order_po_id')
-            ->whereNull('s.deleted_at')->whereBetween('s.shipment_date', [$from, $to])
+            ->whereNull('s.deleted_at')->whereBetween('s.shipment_date', [$from, $to])->tap(fn ($q) => \ME\MerchandisingSfl\Support\BuyerVisibility::order($q, 'po.order_id'))
             ->selectRaw('SUM(si.quantity) q, SUM(si.quantity * po.unit_price) v')->first();
 
         return ['qty' => (int) ($row->q ?? 0), 'value' => (float) ($row->v ?? 0)];

@@ -84,7 +84,7 @@ class DashboardStats
             ->orderByRaw('COALESCE(revised_date, plan_date)')->limit(8)->get();
 
         $defects = DB::table('msfl_prod_entry_defects as d')->join('msfl_prod_entries as e', 'e.id', '=', 'd.entry_id')
-            ->whereNull('e.deleted_at')->whereDate('e.entry_date', '>=', $today->copy()->subDays(29))
+            ->whereNull('e.deleted_at')->whereDate('e.entry_date', '>=', $today->copy()->subDays(29))->tap(fn ($q) => \ME\MerchandisingSfl\Support\BuyerVisibility::po($q, 'e.order_po_id'))
             ->selectRaw("e.stage, COALESCE(NULLIF(d.part_name, ''), '—') part, d.type, SUM(d.qty) qty")
             ->groupBy('e.stage', 'part', 'd.type')->orderByDesc('qty')->limit(6)->get();
 

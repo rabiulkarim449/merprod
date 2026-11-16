@@ -12,6 +12,11 @@ use ME\MerchandisingSfl\Models\Concerns\HasStatus;
 
 class Order extends Model
 {
+    use \ME\MerchandisingSfl\Models\Concerns\BuyerScoped;
+
+    /** Report pages: how this row reaches its buyer (see BuyerVisibility). */
+    public const BUYER_VIA = ['buyer', 'buyer_id'];
+
     use HasAudit;
     use HasStatus;
     use SoftDeletes;

@@ -9,6 +9,11 @@ use Illuminate\Support\Carbon;
 
 class TnaTask extends Model
 {
+    use \ME\MerchandisingSfl\Models\Concerns\BuyerScoped;
+
+    /** Report pages: how this row reaches its buyer (see BuyerVisibility). */
+    public const BUYER_VIA = ['plan', 'tna_plan_id'];
+
     /** Display state => [label, badge color]. */
     public const STATES = [
         'done' => ['Done', 'success'],

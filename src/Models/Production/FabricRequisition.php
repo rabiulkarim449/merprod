@@ -13,6 +13,11 @@ use ME\MerchandisingSfl\Models\OrderPo;
  */
 class FabricRequisition extends Model
 {
+    use \ME\MerchandisingSfl\Models\Concerns\BuyerScoped;
+
+    /** Report pages: how this row reaches its buyer (see BuyerVisibility). */
+    public const BUYER_VIA = ['po', 'order_po_id'];
+
     protected $table = 'msfl_prod_fabric_requisitions';
 
     protected $fillable = ['order_po_id', 'inv_requisition_id', 'created_by'];

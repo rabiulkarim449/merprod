@@ -14,6 +14,11 @@ use ME\MerchandisingSfl\Models\Concerns\RequiresApproval;
 /** Buyer — a new one is approved on the central Approvals page before it can be used. */
 class Buyer extends Model
 {
+    use \ME\MerchandisingSfl\Models\Concerns\BuyerScoped;
+
+    /** Report pages: how this row reaches its buyer (see BuyerVisibility). */
+    public const BUYER_VIA = ['self', 'id'];
+
     use HasAudit;
     use IsMaster;
     use RequiresApproval;
