@@ -25,6 +25,7 @@ use ME\MerchandisingSfl\Http\Controllers\Production\SewingController;
 use ME\MerchandisingSfl\Http\Controllers\Production\StatusController;
 use ME\MerchandisingSfl\Services\ProductionFlow;
 use ME\MerchandisingSfl\Http\Controllers\SampleController;
+use ME\MerchandisingSfl\Http\Controllers\SampleQaFormController;
 use ME\MerchandisingSfl\Http\Controllers\StyleController;
 use ME\MerchandisingSfl\Http\Controllers\TnaCalendarController;
 use ME\MerchandisingSfl\Http\Controllers\TnaPlanController;
@@ -90,6 +91,12 @@ Route::middleware($route['middleware'] ?? ['web', 'auth'])
         Route::post('samples/{sample}/submit', [SampleController::class, 'submit'])->name('samples.submit');
         Route::post('samples/{sample}/decide', [SampleController::class, 'decide'])->name('samples.decide');
         Route::post('samples/{sample}/comments', [SampleController::class, 'storeComment'])->name('samples.comments.store');
+        // Sample → Marketing Sample QA Submission Form (one per sample)
+        Route::get('sample-qa-forms', [SampleQaFormController::class, 'index'])->name('sample-qa-forms.index');
+        Route::get('sample-qa-forms/{sample}', [SampleQaFormController::class, 'show'])->name('samples.qa-form.show');
+        Route::get('sample-qa-forms/{sample}/edit', [SampleQaFormController::class, 'edit'])->name('samples.qa-form.edit');
+        Route::put('sample-qa-forms/{sample}', [SampleQaFormController::class, 'update'])->name('samples.qa-form.update');
+        Route::get('sample-qa-forms/{sample}/print', [SampleQaFormController::class, 'print'])->name('samples.qa-form.print');
 
         // Planning — setup (machine types, operations, holidays are in MasterRegistry)
         Route::resource('lines', LineController::class)->only(['index', 'store', 'update', 'destroy']);
