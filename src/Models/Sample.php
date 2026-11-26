@@ -93,6 +93,11 @@ class Sample extends Model
         return $this->hasMany(SampleComment::class)->latest('comment_date')->latest('id');
     }
 
+    public function qaForm(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(SampleQaForm::class);
+    }
+
     public function isEditable(): bool
     {
         return in_array($this->status, ['requested', 'in_progress'], true);

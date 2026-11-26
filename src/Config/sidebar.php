@@ -58,6 +58,7 @@ return [
                     ],
                 ],
                 ['title' => 'Sample Stages', 'icon' => 'fa-solid fa-vial', 'icon_color' => 'text-primary', 'permission' => 'msfl_sample', 'route' => "$base/samples"],
+                ['title' => 'Sample Submission Form', 'icon' => 'fa-solid fa-clipboard-check', 'icon_color' => 'text-primary', 'permission' => 'msfl_sample_qa_form', 'route' => "$base/sample-qa-forms"],
                 ['title' => 'Reports', 'icon' => 'fa-solid fa-chart-pie', 'icon_color' => 'text-primary', 'permission' => 'msfl_report', 'route' => "$base/reports"],
             ],
         ],

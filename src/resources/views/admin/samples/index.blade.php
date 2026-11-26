@@ -84,6 +84,9 @@
                                     @can('msfl_sample.view')
                                         <a href="{{ route('msfl.samples.show', $sample) }}" class="btn-custom ui-act ui-act-view" title="View"><i class="fa-solid fa-eye"></i></a>
                                     @endcan
+                                    @can('msfl_sample_qa_form.view')
+                                        <a href="{{ route('msfl.samples.qa-form.show', $sample) }}" class="btn-custom ui-act ui-act-report" title="Submission Form"><i class="fa-solid fa-clipboard-check"></i></a>
+                                    @endcan
                                     @if($sample->isEditable())
                                         @can('msfl_sample.edit')
                                             <a href="{{ route('msfl.samples.edit', $sample) }}" class="btn-custom ui-act ui-act-edit" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a>

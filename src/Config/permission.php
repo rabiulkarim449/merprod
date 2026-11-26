@@ -47,6 +47,7 @@ return [
 
         // Sample Stages
         'msfl_sample' => ['label' => 'Sample Stages', 'permissions' => $crud + ['approve' => 'Approve / Reject']],
+        'msfl_sample_qa_form' => ['label' => 'Sample Submission Form (QA)', 'permissions' => ['list' => 'List', 'view' => 'View', 'edit' => 'Edit', 'print' => 'Print', 'all' => 'All']],
 
         'msfl_post_costing' => ['label' => 'Post Cost Sheet (Budget vs Actual)', 'permissions' => ['list' => 'List', 'view' => 'View', 'all' => 'All']],
 

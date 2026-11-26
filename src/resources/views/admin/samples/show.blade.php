@@ -40,6 +40,9 @@
                         </form>
                     @endif
                 @endcan
+                @can('msfl_sample_qa_form.view')
+                    <a href="{{ route('msfl.samples.qa-form.show', $sample) }}" class="btn btn-sm ui-act ui-act-report" title="Marketing Sample QA Submission Form"><i class="fa-solid fa-clipboard-check"></i> Submission Form</a>
+                @endcan
                 @include('merchandising-sfl::admin.partials.print-button')
                 <a href="{{ route('msfl.samples.index') }}" class="btn btn-sm ui-act ui-act-back" title="Back"><i class="fa-solid fa-arrow-left"></i> Back</a>
             </div>

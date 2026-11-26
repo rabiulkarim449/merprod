@@ -279,6 +279,32 @@ class PageHelp
                 'before' => 'Style',
                 'after' => 'Order / T&A (sample তারিখ নিজে বসে)',
             ],
+            'sample-qa-forms' => [
+                'title' => 'Sample Submission Form',
+                'what' => 'সব sample-এর তালিকা — কোনটার Marketing Sample QA Submission Form পূরণ হয়েছে (Filled) আর কোনটার হয়নি (Not filled)।',
+                'steps' => [
+                    'Filter দিয়ে Buyer, Sample Type, Filled / Not filled বা QA Status বাছুন।',
+                    '<i class="fa-solid fa-pen-to-square"></i> চেপে ফর্ম পূরণ / Edit করুন, <i class="fa-solid fa-eye"></i> দিয়ে দেখুন, <i class="fa-solid fa-print"></i> দিয়ে Print।',
+                    'নতুন sample বানাতে Sample Stages-এ যান — ফর্ম সেই sample-এর তথ্য নিজে নেয়।',
+                ],
+                'before' => 'Sample Stages',
+                'after' => 'Submit to Buyer',
+            ],
+            'samples.qa-form' => [
+                'title' => 'Sample Submission Form (QA)',
+                'what' => 'Client-এর "Marketing Sample QA Submission Form" — প্রতিটা sample-এর একটা। Buyer, Style / Sample ID, PO, Product category, Color / Size, Qty, Sample type, Required date, Costing ref. আর Tech pack sample থেকে নিজে বসে; বাকিটা QA পূরণ করে।',
+                'steps' => [
+                    'Sample খুলে <strong>Submission Form</strong> চাপুন, তারপর <strong>Fill Form / Edit</strong>।',
+                    'Brand / Market, Marketing purpose, Meeting / Event, QA inspection date, Custodian, Return due date লিখুন।',
+                    'Commercial objective আর Reference check-এর ঘরে টিক দিন, দরকারে Ref লিখুন।',
+                    '১২টা checkpoint-এ QA observation, Result (Pass / Fail / N/A) আর Defect class দিন, তারপর Save।',
+                    '<strong>Print</strong> করে Final Release Decision-এ ৪ জন হাতে সই করবেন।',
+                ],
+                'example' => 'Showroom sample: Target impression Premium, Customer use Showroom, QA status Ready, Ownership Returnable।',
+                'before' => 'Sample',
+                'after' => 'Submit to Buyer',
+                'actions' => ['edit' => 'Sample type (SMS / Showroom / Exhibition …) Sample-এর Sample Type থেকে আসে — Masters → Sample Types-এ রাখুন।'],
+            ],
 
             // ---------------------------------------------------------------- Order + BOM
             'orders' => [
